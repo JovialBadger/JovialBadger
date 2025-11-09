@@ -49,13 +49,9 @@ class LogCapture {
   // =========================
   attachSettingsButton(selector) {
     // Wait for DOM ready before attaching button
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => {
-        appendAndListen()
-      });
-    } else {
+    document.addEventListener('DOMContentLoaded', () => {
       appendAndListen()
-    }
+    });
     function appendAndListen() {
       const settingBtn = document.createElement('button');
       settingBtn.textContent = '⚙ Console Logs';
