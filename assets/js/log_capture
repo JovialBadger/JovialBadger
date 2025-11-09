@@ -1,0 +1,180 @@
+class LogCapture {
+  constructor(config = {}) {
+    this.defaultSettings = {
+      capture: { error: true, warn: true, log: true, info: true },
+      showToasties: true,
+      autoDismiss: true,
+      dismissTime: 5000,
+      logLevel: 'info',
+      persistLogs: true,
+      maxLogs: 100,
+    };
+    this.settings = { ...this.defaultSettings, ...config, ...this.loadSettings()q };
+    this.logs = this.settings.persistLogs ? this.loadLogs() : [];
+    this.logMap = new Map(); // for grouping
+    this.init();
+  }
+const style = document.createElement('style');
+style.textContent = `
+  .log-toasty {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background: #333;
+    color: white;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    z-index: 9999;
+    font-family: sans-serif;
+  }
+  .log-toasty.error { background: #c00; }
+  .log-toasty.warn { background: #e6b800; }
+  .log-toasty .log-count {
+    background: #fff;
+    color: #000;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 8px;
+    font-size: 0.8em;
+  }
+  .log-settings-modal, .log-full-modal {
+    position: fixed;
+    top: 20%;
+    left: 30%;
+    background: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    z-index: 9999;
+    font-family: sans-serif;
+  }
+  .log-settings-modal label, .log-settings-modal select {
+    display: block;
+    margin: 5px 0;
+  }
+`;
+document.head.appendChild(style);
+
+  loadSettings() {
+    try {
+      return JSON.parse(localStorage.getItem('logCaptureSettings')) || {};
+    } catch {
+      return {};
+    }
+  }
+
+  saveSettings() {
+    localStorage.setItem('logCaptureSettings', JSON.stringify(this.settings));
+  }
+
+  loadLogs() {
+    try {
+      return JSON.parse(localStorage.getItem('logCaptureRecords')) || [];
+    } catch {
+      return [];
+    }
+  }
+
+  saveLogs() {
+    if (this.settings.persistLogs) {
+      localStorage.setItem('logCaptureRecords', JSON.stringify(this.logs.slice(-this.settings.maxLogs)));
+    }
+  }
+
+  log(type, args) {
+    const levels = ['info', 'log', 'warn', 'error'];
+    if (levels.indexOf(type) < levels.indexOf(this.settings.logLevel)) return;
+
+    const key = `${type}:${JSON.stringify(args)}`;
+    const timestamp = new Date().toISOString();
+
+    if (this.logMap.has(key)) {
+      const entry = this.logMap.get(key);
+      entry.count++;
+      entry.timestamp = timestamp;
+      this.updateToastyCount(entry.toasty, entry.count);
+    } else {
+      const entry = { type, args, timestamp, count: 1 };
+      this.logs.push(entry);
+      this.saveLogs();
+      if (this.settings.showToasties) {
+        entry.toasty = this.showToasty(entry);
+      }
+      this.logMap.set(key, entry);
+    }
+  }
+
+  updateToastyCount(toasty, count) {
+    const badge = toasty.querySelector('.log-count');
+    if (badge) badge.textContent = `×${count}`;
+  }
+
+  showToasty(entry) {
+    const toast = document.createElement('div');
+    toast.className = `log-toasty ${entry.type}`;
+    toast.innerHTML = `
+      <strong>${entry.type.toUpperCase()}</strong>: ${entry.args.join(' ')}
+      <span class="log-count">×${entry.count}</span>
+      <button class="open-log">Open</button>
+      <button class="close-log">×</button>
+    `;
+    toast.querySelector('.close-log').onclick = () => toast.remove();
+    toast.querySelector('.open-log').onclick = () => this.showLogModal();
+    document.body.appendChild(toast);
+    if (this.settings.autoDismiss) {
+      setTimeout(() => toast.remove(), this.settings.dismissTime);
+    }
+    return toast;
+  }
+
+  createSettingsModal() {
+    const modal = document.createElement('div');
+    modal.className = 'log-settings-modal';
+    modal.innerHTML = `
+      <h3>Log Capture Settings</h3>
+      ${['error', 'warn', 'log', 'info'].map(type => `
+        <label>
+          <input type="checkbox" data-setting="${type}" ${this.settings.capture[type] ? 'checked' : ''}>
+          Capture ${type}
+        </label>
+      `).join('')}
+      <label><input type="checkbox" data-setting="showToasties" ${this.settings.showToasties ? 'checked' : ''}> Show Toasties</label>
+      <label><input type="checkbox" data-setting="autoDismiss" ${this.settings.autoDismiss ? 'checked' : ''}> Auto-dismiss Toasties</label>
+      <label>Dismiss Time (ms): <input type="number" data-setting="dismissTime" value="${this.settings.dismissTime}"></label>
+      <label>Log Level:
+        <select data-setting="logLevel">
+          ${['info', 'log', 'warn', 'error'].map(lvl => `<option value="${lvl}" ${this.settings.logLevel === lvl ? 'selected' : ''}>${lvl}</option>`).join('')}
+        </select>
+      </label>
+      <label><input type="checkbox" data-setting="persistLogs" ${this.settings.persistLogs ? 'checked' : ''}> Persist Logs</label>
+      <label>Max Logs: <input type="number" data-setting="maxLogs" value="${this.settings.maxLogs}"></label>
+      <button id="export-logs">Export Logs</button>
+      <button id="open-full-log">Open Full Log</button>
+      <button id="close-settings">Close</button>
+    `;
+    modal.querySelectorAll('[data-setting]').forEach(input => {
+      input.onchange = () => {
+        const key = input.dataset.setting;
+        const value = input.type === 'checkbox' ? input.checked : input.value;
+        if (key in this.settings.capture) {
+          this.settings.capture[key] = value;
+        } else {
+          this.settings[key] = input.type === 'number' ? parseInt(value) : value;
+        }
+        this.saveSettings();
+      };
+    });
+    modal.querySelector('#export-logs').onclick = () => {
+      const blob = new Blob([JSON.stringify(this.logs, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'logs.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+    modal.querySelector('#open-full-log').onclick = () => this.showLogModal();
+    modal.querySelector('#close-settings').onclick = () => modal.remove();
+    document.body.appendChild(modal);
+  }
+}
