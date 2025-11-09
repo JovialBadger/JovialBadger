@@ -172,7 +172,7 @@ function diceApp(containerId, options = {}) {
         const diceInput = form.dice.value.trim();
         const unique = form.unique.checked;
         const combine = form.combine.checked;
-        this.roll(diceInput, {unique,combine});
+        this.roll(diceInput, { unique, combine });
       });
 
       resetBtn.addEventListener("click", () => {
@@ -584,56 +584,56 @@ function diceApp(containerId, options = {}) {
       }
       return resultsObj;
     }
-// Merge sets with identical domains by summing counts
-mergeDuplicateSets(sets) {
-  const map = new Map();
-  for (const s of sets) {
-    // Build canonical domain key
-    // For standard dice where values are 1..N, detect by continuous range starting at 1
-    let domainKey, domainLabel;
-    const vals = Array.isArray(s.values) ? s.values.slice() : [];
-    vals.sort((a,b) => a-b);
-    const isStandardDie = vals.length > 0 && vals[0] === 1 && vals.every((v,i)=> v === i+1);
-    if (isStandardDie) {
-      const size = vals.length;
-      domainKey = `d${size}`;
-      domainLabel = `d${size}`;
-    } else {
-      domainKey = `pool:${vals.join(",")}`;
-      domainLabel = `{${vals.join(",")}}`;
-    }
+    // Merge sets with identical domains by summing counts
+    mergeDuplicateSets(sets) {
+      const map = new Map();
+      for (const s of sets) {
+        // Build canonical domain key
+        // For standard dice where values are 1..N, detect by continuous range starting at 1
+        let domainKey, domainLabel;
+        const vals = Array.isArray(s.values) ? s.values.slice() : [];
+        vals.sort((a, b) => a - b);
+        const isStandardDie = vals.length > 0 && vals[0] === 1 && vals.every((v, i) => v === i + 1);
+        if (isStandardDie) {
+          const size = vals.length;
+          domainKey = `d${size}`;
+          domainLabel = `d${size}`;
+        } else {
+          domainKey = `pool:${vals.join(",")}`;
+          domainLabel = `{${vals.join(",")}}`;
+        }
 
-    const existing = map.get(domainKey);
-    if (existing) {
-      existing.count += s.count;
-      // preserve values (same domain) and append original label for traceability
-      existing.label = existing.label + " + " + s.label;
-    } else {
-      // make a shallow copy to avoid mutating original
-      map.set(domainKey, {
-        label: s.label,
-        domainLabel,
-        values: vals.slice(),
-        count: s.count
-      });
-    }
-  }
+        const existing = map.get(domainKey);
+        if (existing) {
+          existing.count += s.count;
+          // preserve values (same domain) and append original label for traceability
+          existing.label = existing.label + " + " + s.label;
+        } else {
+          // make a shallow copy to avoid mutating original
+          map.set(domainKey, {
+            label: s.label,
+            domainLabel,
+            values: vals.slice(),
+            count: s.count
+          });
+        }
+      }
 
-  // Post-process labels to be cleaner: set label like '6d3' or '6×{...}'
-  const merged = [];
-  for (const [key, v] of map.entries()) {
-    if (key.startsWith("d")) {
-      const size = key.slice(1);
-      const total = v.count;
-      v.label = `${total}d${size}`;
-      v.domainLabel = `d${size}`;
-    } else {
-      v.label = `${v.count}×{${v.values.join(",")}}`;
+      // Post-process labels to be cleaner: set label like '6d3' or '6×{...}'
+      const merged = [];
+      for (const [key, v] of map.entries()) {
+        if (key.startsWith("d")) {
+          const size = key.slice(1);
+          const total = v.count;
+          v.label = `${total}d${size}`;
+          v.domainLabel = `d${size}`;
+        } else {
+          v.label = `${v.count}×{${v.values.join(",")}}`;
+        }
+        merged.push(v);
+      }
+      return merged;
     }
-    merged.push(v);
-  }
-  return merged;
-}
     // Public roll path
     roll(input, opt = {}) {
       const sets = this.parseDice(input);
@@ -655,15 +655,15 @@ mergeDuplicateSets(sets) {
         if (this.container) this.renderResults(empty.results);
         return empty.results;
       }
-const parsedSets = this.parseDice(input);
-const setsToRoll = opt.combine ? this.mergeDuplicateSets(parsedSets) : parsedSets;
-const setsWithRolls = setsToRoll.map(s => ({ ...s, rolls: this.doRollsForSet(s, opt.unique) }));
-     // const setsWithRolls = sets.map(s => ({ ...s, rolls: this.doRollsForSet(s, opt.unique) }));
+      const parsedSets = this.parseDice(input);
+      const setsToRoll = opt.combine ? this.mergeDuplicateSets(parsedSets) : parsedSets;
+      const setsWithRolls = setsToRoll.map(s => ({ ...s, rolls: this.doRollsForSet(s, opt.unique) }));
+      // const setsWithRolls = sets.map(s => ({ ...s, rolls: this.doRollsForSet(s, opt.unique) }));
       const summary = this.summarize(setsWithRolls);
       const results = { sets: setsWithRolls, summary };
       const presets = { ...this.state.presets };
 
-      this.state = { input, presets, unique:opt.unique,combineDuplicates:opt.combine, results, timestamp: Date.now() };
+      this.state = { input, presets, unique: opt.unique, combineDuplicates: opt.combine, results, timestamp: Date.now() };
       this.saveState();
 
       if (this.container) this.renderResults(results);
@@ -672,7 +672,7 @@ const setsWithRolls = setsToRoll.map(s => ({ ...s, rolls: this.doRollsForSet(s, 
 
     reset() {
       //this.state = this.state { input: "", unique: false, results: null, timestamp: null };
-		  this.state = { ...this.state, ...{input: "", unique: false, results: null, timestamp: null } };
+      this.state = { ...this.state, ...{ input: "", unique: false, results: null, timestamp: null } };
       this.saveState();
       if (this.container) {
         const form = this.container.querySelector(".dice-form");
@@ -681,7 +681,7 @@ const setsWithRolls = setsToRoll.map(s => ({ ...s, rolls: this.doRollsForSet(s, 
         const root = this.container.querySelector(".dice-results");
         root.innerHTML = "";
       }
-      renderPresets();
+      this.renderPresets();
     }
 
     saveState() {
