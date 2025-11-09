@@ -49,10 +49,7 @@ class LogCapture {
   // =========================
   attachSettingsButton(selector) {
     // Wait for DOM ready before attaching button
-    document.addEventListener('DOMContentLoaded', () => {
-      appendAndListen()
-    });
-    function appendAndListen() {
+    //document.addEventListener('DOMContentLoaded', () => {
       const settingBtn = document.createElement('button');
       settingBtn.textContent = '⚙ Console Logs';
       const btn = document.querySelector(selector);
@@ -61,8 +58,8 @@ class LogCapture {
       } else {
         document.body.appendChild(settingBtn);
       }
-      settingBtn.addEventListener('click', () => showSettingsModal());
-    }
+      settingBtn.addEventListener('click', () => this.showSettingsModal());
+    //});
   }
 
   showSettingsModal() {
