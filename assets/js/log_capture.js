@@ -61,7 +61,7 @@ class LogCapture {
       } else {
         document.body.appendChild(settingBtn);
       }
-      settingBtn.addEventListener('click', () => this.showSettingsModal());
+      settingBtn.addEventListener('click', () => showSettingsModal());
     }
   }
 
