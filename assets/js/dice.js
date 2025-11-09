@@ -671,7 +671,8 @@ const setsWithRolls = setsToRoll.map(s => ({ ...s, rolls: this.doRollsForSet(s, 
     }
 
     reset() {
-      this.state = { input: "", unique: false, results: null, timestamp: null };
+      //this.state = this.state { input: "", unique: false, results: null, timestamp: null };
+		  this.state = { ...this.state, ...{input: "", unique: false, results: null, timestamp: null } };
       this.saveState();
       if (this.container) {
         const form = this.container.querySelector(".dice-form");

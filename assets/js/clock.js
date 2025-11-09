@@ -1,4 +1,19 @@
-
+---
+---
+// ==UserScript==
+// @name        JB_Script_Clock
+// @description JS Clock (single-function, vanilla JS)
+// @version     0.1
+// @namespace   Jovial-Badger_Scripts
+// @match       *://*/*
+// @grant       none
+// @author      Jovial Badger
+// @downloadURL {{ site.url }}{{page.url}}
+// @updateURL   {{ site.url }}{{page.url}}
+// @homepageURL {{ site.url }}
+// @icon        {{ site.url }}{{ "/assets/logo/letters_logo.svg" | relative_url }}
+// @run-at      document-end
+// ==/UserScript==
 /*
   AnalogClockApp(containerId, clocksConfig)
   - Single-file, zero-dependency module that injects CSS, DOM and logic.
@@ -21,10 +36,10 @@
     wk           -> ISO week number
     doy          -> day of year
 */
-(function AnalogClockApp(containerId, clocksConfig) {
+function AnalogClockApp(containerId, clocksConfig = []) {
   // Namespace guard
-  if (!containerId) throw new Error('AnalogClockApp requires containerId');
-  var root = document.getElementById(containerId);
+  if (!containerId) containerId = 'body';
+  var root = document.querySelector(containerId);
   if (!root) throw new Error('Container element not found: ' + containerId);
 
   // Defaults
@@ -34,7 +49,7 @@
     shape: 'round', // round | square | oval | custom
     customPath: '', // for custom shape svg path (d attribute)
     timezone: 0, // offset hours from UTC (can be fractional)
-    size: 250, // px - used for initial viewport scale, SVG is responsive
+    size: 75, // px - used for initial viewport scale, SVG is responsive
     brand: '',
     colors: {
       face: '#c5c5c5',
@@ -144,7 +159,7 @@
         <select id="ac-type"><option value="analog">Analog</option><option value="digital">Digital</option></select></div>\
       <div class="row"><label>Brand</label><input id="ac-brand" type="text" value=""></div>\
       <div class="row"><label>Timezone (UTC offset)</label><input id="ac-tz" type="number" step="0.25" value=""></div>\
-      <div class="row"><label>Size (px)</label><input id="ac-size" type="number" min=48 value=""></div>\
+      <div class="row"><label>Size (%)</label><input id="ac-size" type="number" max=95 value=""></div>\
       <div class="row"><label>Shape</label>\
         <select id="ac-shape"><option value="round">Round</option><option value="square">Square</option><option value="oval">Oval</option><option value="custom">Custom Path</option></select></div>\
       <div class="row" id="ac-custom-path-row" style="display:none"><label>Custom path</label><textarea id="ac-custom-path" rows=3 placeholder="SVG path d attribute"></textarea></div>\
@@ -299,7 +314,7 @@
   function createClock(id, settings) {
     var wrapper = document.createElement('div');
     wrapper.className = 'ac-clock ac-medium';
-    wrapper.style.width = (settings.size || 250) + 'px';
+    wrapper.style.width = (settings.size || 50) + '%';
     wrapper.dataset.acId = id;
 
     // Build inner contents: settings button + svg or digital div
@@ -337,7 +352,7 @@
     var el = clock.el;
     el.innerHTML = ''; // reset
     // set wrapper width from size
-    clock.wrapper.style.width = s.size + 'px';
+    clock.wrapper.style.width = s.size + '%';
 
     // CSS variables via style attribute on wrapper for scoping
     clock.wrapper.style.setProperty('--face', s.colors.face);
@@ -651,8 +666,10 @@
   // Return app root for external use (attached to container via DOM)
   return appRoot;
 
-})(/* invocation */ 'pageContent', [
-  // Example default clocks if none provided externally
-  { id: 'localAnalog', type: 'analog', brand: 'Jovial Badger', timezone: 0, size: 250 },
-  { id: 'tokyoDigital', type: 'digital', brand: 'Tokyo Time', timezone: 9, size: 240, digital: { format: 'ddd, dd mmm yyyy HH:MM:ss' }, show: { week: true, doy: true } }
-]);
+}
+const url = {{ site.default_site_url }};
+if (typeof site !== 'undefined') {
+  if (!window.location.href.includes(url)) {
+    AnalogClockApp();
+  }
+}

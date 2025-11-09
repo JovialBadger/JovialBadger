@@ -9,7 +9,7 @@ order: 1
 <div><button id='reset-filters'>Reset Filters</button></div>
 <div id='containerDataOutput'></div>
 <div id='containerPagingOutput'></div>
-<script src="{{ " /assets/js/data.js" | relative_url }}"></script>
+<script src="{{ "/assets/js/data.js" | relative_url }}"></script>
 <script>
   const scheduleURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS2lKSaFjfsuZK7Lseo_HsGYhq1VpQQ_qRqntI2NQqc8qlCRAY919Zje_IaCbsorgAgtA-8noCqHyWL/pub?gid=197807890&single=true&output=csv';
   const resultsURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSfCDBr6vjSUVxA41chCnyUR46oNnPVyzCyS0_NbvLbk_9eh0Got1BPnZkIKmDngC2bp0bshVm3NiK2/pub?gid=1564670715&single=true&output=csv";

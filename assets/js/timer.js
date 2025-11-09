@@ -2,12 +2,12 @@
 ---
 // ==UserScript==
 // @name        JB_Script_Timer
-// @namespace   Jovial Badger Scripts
+// @description A countdown/countup timer driven by URL query parameters.
+// @version     0.1
+// @namespace   Jovial-Badger_Scripts
 // @match       *://*/*
 // @grant       none
-// @version     1.0
 // @author      Jovial Badger
-// @description A countdown/countup timer driven by URL query parameters.
 // @downloadURL {{ site.url }}{{page.url}}
 // @updateURL   {{ site.url }}{{page.url}}
 // @homepageURL {{ site.url }}
@@ -987,3 +987,10 @@ function createUrlTimer(containerId) {
   })();
 }
 
+
+const url = {{ site.default_site_url }};
+if (typeof site !== 'undefined') {
+  if (!window.location.href.includes(url)) {
+    createUrlTimer();
+  }
+}

@@ -7,9 +7,7 @@ order: 1
 <div id='containerMediaGallery'></div>
 <script src="{{ "/assets/js/gallery.js" | relative_url }}"></script>
 <script>
-    // mediaGallery({
-    //     direct: [{url:'{{ "/assets/logo/badger_letters_logo.svg" | relative_url }}'}],
-    //     namespace:'mediaGallery',
-    //     container: '#containerMediaGallery',
-    // });
+    mediaGallery({
+      namespace: 'mediaGallery',
+    });
 </script>

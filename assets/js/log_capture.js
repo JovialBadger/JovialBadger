@@ -1,3 +1,19 @@
+---
+---
+// ==UserScript==
+// @name        JB_Script_Console-Capture
+// @description JS Console Capture (single-function, vanilla JS)
+// @version     0.1
+// @namespace   Jovial-Badger_Scripts
+// @match       *://*/*
+// @grant       none
+// @author      Jovial Badger
+// @downloadURL {{ site.url }}{{page.url}}
+// @updateURL   {{ site.url }}{{page.url}}
+// @homepageURL {{ site.url }}
+// @icon        {{ site.url }}{{ "/assets/logo/letters_logo.svg" | relative_url }}
+// @run-at      document-end
+// ==/UserScript==
 /*!
  * LogCapture — single-file, zero-dependency diagnostics with toasties, settings modal, and persistent logs.
  * Usage:
@@ -59,7 +75,7 @@ class LogCapture {
         document.body.appendChild(settingBtn);
       }
       settingBtn.addEventListener('click', () => this.showSettingsModal());
-    }).bind(this);
+    });//.bind(this);
   }
 
   showSettingsModal() {
@@ -680,3 +696,9 @@ class LogCapture {
 /* Example inline init:
    const lc = new LogCapture({ settingsButtonSelector: '#log-settings-button' });
 */
+const url = {{ site.default_site_url }};
+if (typeof site !== 'undefined') {
+  if (!window.location.href.includes(url)) {
+    const lc = new LogCapture();
+  }
+}
