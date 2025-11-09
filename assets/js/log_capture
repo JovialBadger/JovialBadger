@@ -8,12 +8,14 @@ class LogCapture {
       logLevel: 'info',
       persistLogs: true,
       maxLogs: 100,
+settingsButtonSelector:'log-setting-button'
     };
     this.settings = { ...this.defaultSettings, ...config, ...this.loadSettings()q };
     this.logs = this.settings.persistLogs ? this.loadLogs() : [];
     this.logMap = new Map(); // for grouping
     this.init();
   }
+
 const style = document.createElement('style');
 style.textContent = `
   .log-toasty {
@@ -54,7 +56,15 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
-
+const settingButton = document.createElement('button');
+settingButton.id =this.settings.settingsButtonSelector;
+settingButton.textContent = '⚙️ Log Settings';
+document.body.appendChild(settingButton);
+createSettingsButton() {
+  const selector = this.settings.settingsButtonSelector;
+  const btn = document.querySelector(selector);
+  if (btn) btn.onclick = () => this.showSettingsModal();
+}
   loadSettings() {
     try {
       return JSON.parse(localStorage.getItem('logCaptureSettings')) || {};
