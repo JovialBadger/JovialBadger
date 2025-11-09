@@ -1445,9 +1445,9 @@
     // =============== End main function ===============
   }
 
-const url = {{ site.default_site_url }};
+const urlGallery = {{ site.default_site_url }};
 if (typeof site !== 'undefined') {
-  if (!window.location.href.includes(url)) {
+  if (!window.location.href.includes(urlGallery)) {
     mediaGallery({
       namespace: 'mediaGallery',
     });
