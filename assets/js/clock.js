@@ -454,7 +454,7 @@ function AnalogClockApp(containerId, clocksConfig = []) {
 
       // brand text
       var brand = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      brand.setAttribute('x', '50'); brand.setAttribute('y', '18');
+      brand.setAttribute('x', '50'); brand.setAttribute('y', '25');
       brand.classList.add('ac-brand'); brand.setAttribute('fill', s.colors.text);
       brand.textContent = s.brand || '';
       svg.appendChild(brand);
