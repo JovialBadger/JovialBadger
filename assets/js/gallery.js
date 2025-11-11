@@ -1,5 +1,5 @@
 ---
----
+  ---
   // ==UserScript==
   // @name        JB_Script_Media-Gallery
   // @description Media Gallery (single-function, vanilla JS)
@@ -279,22 +279,24 @@
       const attr = pair.attr || null;
       //if (!Array.isArray(pairs)) return results;
       //pairs.forEach(({ selector, attr }) => {
-        if (!selector) return [];
-        const nodes = document.querySelectorAll(selector);
-        nodes.forEach(el => {
-          let url = null;
-          if (!attr) {
-            if (el instanceof HTMLImageElement) url = el.currentSrc || el.src;
-            else if (el instanceof HTMLAnchorElement) url = el.href;
-            else if (el instanceof HTMLVideoElement) {
-              const srcEl = el.querySelector('source[src]') || el;
-              url = srcEl.src || srcEl.getAttribute('src') || null;
-            } else url = el.getAttribute('src') || el.getAttribute('href');
-          } else {
-            url = el.getAttribute(attr);
-          }
-          if (url) results.push({ url, sourceEl: el });
-        });
+      if (!selector) return [];
+      const nodes = document.querySelectorAll(selector);
+      nodes.forEach(el => {
+        let url = null;
+        if (!attr) {
+          if (el instanceof HTMLImageElement) url = el.currentSrc || el.src;
+          else if (el instanceof HTMLAnchorElement) url = el.href;
+          else if (el instanceof HTMLVideoElement) {
+            const srcEl = el.querySelector('source[src]') || el;
+            url = srcEl.src || srcEl.getAttribute('src') || null;
+          } else url = el.getAttribute('src') || el.getAttribute('href');
+        } else {
+          url = el.getAttribute(attr);
+        }
+        if (url && !results.some(result => result.url.toLowerCase() === url.toLowerCase())) {
+          results.push({ url, sourceEl: el });
+        }
+      });
       //});
       return results;
     }
@@ -1343,12 +1345,13 @@
         itemDiv.style.gap = '8px';
 
         let mediaDesc = '';
-        if (Array.isArray(m.mediaSelector)) {
-          mediaDesc = m.mediaSelector.map(ms => `${ms.selector}${ms.attr ? '|' + ms.attr : ''}`).join(', ');
+        if (m.mediaSelector) {
+          mediaDesc = m.mediaSelector.selector + m.mediaSelector.attr ? '|' + m.mediaSelector.attr : '';
         }
         let thumbDesc = '';
-        if (Array.isArray(m.thumbSelector)) {
-          thumbDesc = m.thumbSelector.map(ts => `${ts.selector}${ts.attr ? '|' + ts.attr : ''}`).join(', ');
+        if (m.thumbSelector) {
+          thumbDesc = m.thumbSelector.selector + m.thumbSelector.attr ? '|' + m.thumbSelector.attr : '';
+          //thumbDesc = m.thumbSelector.map(ts => `${ts.selector}${ts.attr ? '|' + ts.attr : ''}`).join(', ');
         }
         itemDiv.innerHTML = `<span style="font-size:12px;">
       <strong>Media:</strong> ${mediaDesc || '<em>none</em>'}

@@ -8,6 +8,6 @@ order: 1
 <script src="{{ "/assets/js/gallery.js" | relative_url }}"></script>
 <script>
     mediaGallery({
-      namespace: 'mediaGallery',
+      namespace: 'mediaGallery',selector:'#containerMediaGallery'
     });
 </script>
