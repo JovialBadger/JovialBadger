@@ -66,6 +66,7 @@ function AnalogClockApp(containerId, clocksConfig = []) {
       ampm: true,
       seconds: true,
       minutes: true,
+      oneMinMarks: true,
       fiveMinMarks: true,
       quarterMarks: true,
       week: false,
@@ -177,6 +178,7 @@ function AnalogClockApp(containerId, clocksConfig = []) {
       <div class="row"><label>Show AM/PM</label><input id="ac-show-ampm" type="checkbox"></div>\
       <div class="row"><label>Show Seconds</label><input id="ac-show-seconds" type="checkbox"></div>\
       <div class="row"><label>Show Minutes</label><input id="ac-show-minutes" type="checkbox"></div>\
+      <div class="row"><label>Minute marks</label><input id="ac-show-1m" type="checkbox"></div>\
       <div class="row"><label>Five-minute marks</label><input id="ac-show-5m" type="checkbox"></div>\
       <div class="row"><label>Quarter marks</label><input id="ac-show-15m" type="checkbox"></div>\
       <div class="row"><label>Week number</label><input id="ac-show-week" type="checkbox"></div>\
@@ -215,6 +217,7 @@ function AnalogClockApp(containerId, clocksConfig = []) {
     modal.querySelector('#ac-show-ampm').checked = !!s.show.ampm;
     modal.querySelector('#ac-show-seconds').checked = !!s.show.seconds;
     modal.querySelector('#ac-show-minutes').checked = !!s.show.minutes;
+    modal.querySelector('#ac-show-1m').checked = !!s.show.oneMinMarks;
     modal.querySelector('#ac-show-5m').checked = !!s.show.fiveMinMarks;
     modal.querySelector('#ac-show-15m').checked = !!s.show.quarterMarks;
     modal.querySelector('#ac-show-week').checked = !!s.show.week;
@@ -255,6 +258,7 @@ function AnalogClockApp(containerId, clocksConfig = []) {
       s.show.ampm = modal.querySelector('#ac-show-ampm').checked;
       s.show.seconds = modal.querySelector('#ac-show-seconds').checked;
       s.show.minutes = modal.querySelector('#ac-show-minutes').checked;
+      s.show.oneMinMarks = modal.querySelector('#ac-show-1m').checked;
       s.show.fiveMinMarks = modal.querySelector('#ac-show-5m').checked;
       s.show.quarterMarks = modal.querySelector('#ac-show-15m').checked;
       s.show.week = modal.querySelector('#ac-show-week').checked;
@@ -426,9 +430,10 @@ function AnalogClockApp(containerId, clocksConfig = []) {
           tick.classList.add('ac-tick');
           tick.setAttribute('stroke', s.colors.border);
           tick.setAttribute('stroke-width', strokeW);
-          if (!s.show.quarterMarks && isQuarter) tick.setAttribute('visibility', 'hidden');
-          if (!isFive && !isQuarter && s.show.fiveMinMarks) tick.setAttribute('visibility', 'hidden');
-          if (!s.show.fiveMinMarks) tick.setAttribute('visibility', 'hidden');
+          if (!isFive && !isQuarter && !s.show.oneMinMarks) {tick.setAttribute('visibility', 'hidden');}
+          else if (isFive && !s.show.fiveMinMarks) {tick.setAttribute('visibility', 'hidden');}
+          else if (isQuarter && !s.show.quarterMarks) {tick.setAttribute('visibility', 'hidden');}
+          //if (!s.show.minMarks) tick.setAttribute('visibility', 'hidden');
           g.appendChild(tick);
         }
       } else if (!s.show.fiveMinMarks) {
