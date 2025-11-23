@@ -1452,11 +1452,11 @@
   }
 
 const urlGallery = `{{ site.default_site_url }}`;
-if (typeof site !== 'undefined') {
+//if (typeof site !== 'undefined') {
   if (!window.location.href.includes(urlGallery)) {
     window.mediaGalleryGlobal = mediaGallery;
     //mediaGallery({
     //  namespace: 'mediaGallery',
     //});
   }
-}
+//}
