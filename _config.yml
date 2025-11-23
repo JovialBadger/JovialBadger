@@ -1,5 +1,4 @@
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
-#baseurl: "" # the subpath of your site, e.g. /blog
+url: "https://jovialbadger.co.uk" # the base hostname & protocol for your site, e.g. http://example.com
 title: "Jovial Badger" # the name of your site, e.g. ACME Corp.
-baseurl: "/beta_jb" 
+baseurl: "/beta_jb" # the subpath of your site, e.g. /blog
 default_site_url: "jovialbadger.co.uk"
