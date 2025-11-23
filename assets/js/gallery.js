@@ -10,7 +10,7 @@
   // @author      Jovial Badger
   // @downloadURL {{ site.url }}{{page.url | relative_url }}
   // @updateURL   {{ site.url }}{{page.url | relative_url }}
-  // @homepageURL {{ site.url }}{{site.baseurl}}
+  // @homepageURL {{ site.url }}{{ "/" | relative_url }}
   // @icon        {{ site.url }}{{ "/assets/logo/letters_logo.svg" | relative_url }}
   // @run-at      document-end
   // ==/UserScript==
@@ -1454,8 +1454,9 @@
 const urlGallery = `{{ site.default_site_url }}`;
 if (typeof site !== 'undefined') {
   if (!window.location.href.includes(urlGallery)) {
-    mediaGallery({
-      namespace: 'mediaGallery',
-    });
+    window.mediaGalleryGlobal = mediaGallery;
+    //mediaGallery({
+    //  namespace: 'mediaGallery',
+    //});
   }
 }
